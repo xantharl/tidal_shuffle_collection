@@ -1,0 +1,3 @@
+six
+tidalapi
+requests-oauth2
