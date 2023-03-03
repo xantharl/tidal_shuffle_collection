@@ -1,3 +1,4 @@
 six
 tidalapi
 requests-oauth2
+pyyaml
