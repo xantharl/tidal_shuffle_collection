@@ -15,9 +15,9 @@ session: tidalapi.Session = auth_client.get_session()
 favorites = tidalapi.Favorites(session, session.user.id)
 
 artists: list[tidalapi.artist.Artist] = favorites.artists()
-albums: list[tidalapi.album.Album] = favorites.albums()
-album_ids: list[int] = [a.id for a in albums]
-tracks: list[tidalapi.models.Track] = favorites.tracks()
+# albums: list[tidalapi.album.Album] = favorites.albums()
+# album_ids: list[int] = [a.id for a in albums]
+# tracks: list[tidalapi.Track] = favorites.tracks()
 
 # for artist in artists:
 #     artist_albums = [album for album in artist.get_albums() if album.id not in
