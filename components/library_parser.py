@@ -7,10 +7,12 @@ from domain.artist_behavior import ArtistBehavior
 class LibraryParser:
     def __init__(self, favorites: tidalapi.Favorites) -> None:
         self._favorites = favorites
-        self._all_tracks: list[tidalapi.Track] = None
+        self._all_tracks: "dict[int, tidalapi.Track]" = None
+        self._config = Config.instance().data
+        self._artist_max = self._config.get("max_per_artist", 100000)
 
     @property
-    def all_tracks(self):
+    def all_tracks(self) -> list[tidalapi.Track]:
         if not self._all_tracks:
             self._parse()
 
@@ -29,22 +31,15 @@ class LibraryParser:
         self._parse_albums()
         self._parse_artists()
 
-        max_per_artist = Config.instance().data.get("max_per_artist")
-        if max_per_artist:
-            self._prune_artists(max_per_artist)
-
     def _parse_tracks(self):
         self._all_tracks = self._favorites.tracks()
 
     def _parse_albums(self):
-        data = Config.instance().data
-        artist_max = data.get("max_per_artist", 50)
-        # TODO: Implement collision resolution and max
         albums: list[tidalapi.album.Album] = self._favorites.albums()
         for album in albums:
-            self._all_tracks.extend(
-                [t for t in album.tracks if t.id not in self.track_ids]
-            )
+            limit = self._artist_max - self.artist_count(album.artist)
+            tracks = album.tracks(limit=limit)
+            self._all_tracks.extend([t for t in tracks if t.id not in self.track_ids])
 
     def _parse_artists(self, artist_behavior: ArtistBehavior):
         data = Config.instance().data
@@ -53,7 +48,7 @@ class LibraryParser:
             logging.info("Artist Behavior is set to NONE, skipping artist...")
 
         artists: list[tidalapi.artist.Artist] = self._favorites.artists()
-        artist_max = data.get("max_per_artist", 50)
+        artist_max = data.get("max_per_artist")
 
         if artist_behavior == ArtistBehavior.TOPX:
             for artist in artists:
@@ -66,6 +61,3 @@ class LibraryParser:
                     if limit <= 0:
                         break
                     album.tracks(limit=limit)
-
-    def _prune_artists(self, max_per_artist):
-        pass
