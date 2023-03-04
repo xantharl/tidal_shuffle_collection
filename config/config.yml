@@ -1,5 +1,5 @@
+default_list_name: "Full Collection"
 favorite_artists:
-  include_all: false
   top_tracks: 10
 playlist_maximums:
   tracks_per_artist: 30
