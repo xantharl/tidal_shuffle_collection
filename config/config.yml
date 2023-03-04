@@ -1,2 +1,5 @@
-artist_behavior: NONE
-max_per_artist: 50
+favorite_artists:
+  include_all: false
+  top_tracks: 10
+playlist_maximums:
+  tracks_per_artist: 30
