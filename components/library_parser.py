@@ -17,14 +17,22 @@ class LibraryParser:
         if not self._all_tracks:
             self._parse()
 
-        return self._all_tracks
+        data = []
+        for tracks in self._all_tracks.values():
+            data.extend(tracks)
+
+        return data
 
     @property
     def track_ids(self) -> list[int]:
         return [t.id for t in self._all_tracks]
 
-    def artist_count(self, artist_id: tidalapi.Artist) -> int:
-        artist_tracks = [t for t in self._all_tracks if t.artist.id == artist_id]
+    def artist_count(self, lookup_artist_id: tidalapi.Artist) -> int:
+        artist_tracks = [
+            tracks
+            for artist_id, tracks in self._all_tracks.items()
+            if artist_id == lookup_artist_id
+        ]
         return len(artist_tracks) if artist_tracks else 0
 
     def artist_limit(self, artist_id: tidalapi.Artist) -> int:
