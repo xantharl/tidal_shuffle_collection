@@ -16,7 +16,7 @@ class PlaylistManagerTest(unittest.TestCase):
         lists = manager.get_playlists()
         self.assertIsInstance(lists[0], tidalapi.UserPlaylist)
 
-    def test_create_and_delete_list(self):
+    def test_list_crud(self):
         manager = self.setup()
         title = "unit test list"
         descr = "it's a description"
@@ -27,6 +27,8 @@ class PlaylistManagerTest(unittest.TestCase):
         self.assertEqual(descr, test_list.description)
         self.assertIn(test_list, manager.playlists)
 
+        manager.add_tracks_to_playlist()
+
         result = manager.delete_playlist(test_list)
         self.assertEqual(result.status_code, 204)
         self.assertNotIn(
@@ -34,7 +36,6 @@ class PlaylistManagerTest(unittest.TestCase):
             manager.playlists,
             f"UserPlaylist '{test_list.name}' is still present in lists.",
         )
-        # self.assertNotIn([x.name for x in manager.lists], test_list.name)
 
 
 if __name__ == "__main__":

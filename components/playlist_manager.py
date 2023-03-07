@@ -90,10 +90,26 @@ class PlaylistManager:
     def add_tracks_to_playlist(
         self, playlist: tidalapi.UserPlaylist, tracks: list[tidalapi.Track]
     ):
-        pass
+        media_ids = [t.id for t in tracks]
+        playlist.add(media_ids)
 
-    def update_from_parser(self, parser: LibraryParser):
-        pass
+    def update_from_parser(
+        self, playlist: tidalapi.UserPlaylist, parser: LibraryParser
+    ):
+        current_tracks: list[tidalapi.Track] = playlist.tracks()
+
+        if len(current_tracks > 0):
+            to_remove = [ct for ct in current_tracks if ct not in parser.all_tracks]
+            if len(to_remove) > 0:
+                for track in to_remove:
+                    playlist.remove_by_id(track.id)
+
+        if len(current_tracks) == 0:
+            to_add = parser.all_tracks
+        else:
+            to_add = [p for p in parser.all_tracks if p not in current_tracks]
+
+        self.add_tracks_to_playlist(playlist, [to_add])
 
     def create_full_collection():
         pass

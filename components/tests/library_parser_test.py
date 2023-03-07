@@ -1,3 +1,4 @@
+import logging
 import unittest
 from components.library_parser import LibraryParser
 import tidalapi
@@ -9,10 +10,10 @@ class LibraryParserTest(unittest.TestCase):
         self._auth = Auth("session_data.json")
         self._session = self._auth.session
         self._favorites = tidalapi.Favorites(self._session, self._session.user.id)
+        return LibraryParser(self._favorites)
 
     def test_parse_tracks(self):
-        self.setup()
-        parser = LibraryParser(self._favorites)
+        parser = self.setup()
         parser._parse_tracks()
 
         # This test will fail for users with > 30 tracks favorited for any one artist
@@ -20,13 +21,11 @@ class LibraryParserTest(unittest.TestCase):
         self.assertEqual(len(self._favorites.tracks()), len(parser.all_tracks))
 
     def test_parse_collection(self):
-        self.setup()
-        pass
-
-    def test_parse_artists(self):
-        self.setup()
-        pass
+        parser = self.setup()
+        track_count = len(parser.all_tracks)
+        print(track_count)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level="INFO")
     unittest.main()

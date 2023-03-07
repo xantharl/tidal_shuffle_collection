@@ -1,4 +1,5 @@
 import logging
+import requests
 import tidalapi
 from config.config import Config
 
@@ -68,7 +69,7 @@ class LibraryParser:
             if album.artist.id not in albums_by_artist:
                 albums_by_artist[album.artist.id] = []
 
-            albums_by_artist[album.artist.id].extend(album)
+            albums_by_artist[album.artist.id].append(album)
 
         for artist_id, albums in albums_by_artist.items():
             limit = self.artist_limit(artist_id)
@@ -79,7 +80,17 @@ class LibraryParser:
                 if limit <= 0:
                     continue
 
-                tracks = album.tracks(limit=limit)
+                try:
+                    tracks = album.tracks(limit=limit)
+                    logging.info(
+                        f"Successfully fetched album {album.artist.name} - {album.name}"
+                    )
+                except requests.exceptions.HTTPError as e:
+                    logging.error(
+                        f"HTTP Error for Album {album.artist.name} - {album.name}"
+                    )
+                    logging.error(e)
+
                 limit -= len(tracks)
 
                 if artist_id not in self._all_tracks:
