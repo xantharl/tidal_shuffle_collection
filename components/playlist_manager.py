@@ -16,7 +16,7 @@ class PlaylistManager:
         self._refresh_playlists()
 
     @property
-    def playlists(self):
+    def playlists(self) -> tidalapi.UserPlaylist:
         return self._playlists
 
     def _refresh_playlists(self):
@@ -40,7 +40,7 @@ class PlaylistManager:
         )
 
         self._playlists.append(
-            tidalapi.Playlist(self._session, None).parse(
+            tidalapi.UserPlaylist(self._session, None).parse(
                 json.loads(response.text).get("data")
             )
         )
@@ -61,15 +61,15 @@ class PlaylistManager:
             raise Exception(f"Something went wrong! {response.reason}")
 
         items = json.loads(response.content).get("items")
-        playlists: list[tidalapi.Playlist] = []
+        playlists: list[tidalapi.UserPlaylist] = []
         for item in items:
             data = item.get("data")
             if data and data.get("uuid"):
-                playlists.append(tidalapi.Playlist(self._session, None).parse(data))
+                playlists.append(tidalapi.UserPlaylist(self._session, None).parse(data))
 
         return playlists
 
-    def delete_playlist(self, playlist: tidalapi.Playlist):
+    def delete_playlist(self, playlist: tidalapi.UserPlaylist):
         path = "my-collection/playlists/folders/remove"
 
         params = {
@@ -88,7 +88,7 @@ class PlaylistManager:
         return response
 
     def add_tracks_to_playlist(
-        self, playlist: tidalapi.Playlist, tracks: list[tidalapi.Track]
+        self, playlist: tidalapi.UserPlaylist, tracks: list[tidalapi.Track]
     ):
         pass
 
