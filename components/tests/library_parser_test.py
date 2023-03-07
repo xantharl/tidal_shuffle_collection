@@ -7,7 +7,7 @@ from connector.auth import Auth
 class LibraryParserTest(unittest.TestCase):
     def setup(self):
         self._auth = Auth("session_data.json")
-        self._session = self._auth.get_session()
+        self._session = self._auth._init_session()
         self._favorites = tidalapi.Favorites(self._session, self._session.user.id)
 
     def test_parse_tracks(self):
