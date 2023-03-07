@@ -24,6 +24,10 @@ class LibraryParser:
         return data
 
     @property
+    def playlists(self) -> list[tidalapi.Playlist]:
+        return self._favorites.playlists()
+
+    @property
     def track_ids(self) -> list[int]:
         return [t.id for t in self._all_tracks]
 
