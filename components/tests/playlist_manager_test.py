@@ -20,8 +20,8 @@ class PlaylistManagerTest(unittest.TestCase):
         manager = self.setup()
         title = "unit test list"
         descr = "it's a description"
-
         test_list = manager.create_list(title, descr)
+
         self.assertIsInstance(test_list, tidalapi.UserPlaylist)
         self.assertEqual(title, test_list.name)
         self.assertEqual(descr, test_list.description)
