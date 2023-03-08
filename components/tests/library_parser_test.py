@@ -6,11 +6,11 @@ from connector.auth import Auth
 
 
 class LibraryParserTest(unittest.TestCase):
-    def setup(self):
+    def setup(self, track_limit=None):
         self._auth = Auth("session_data.json")
         self._session = self._auth.session
         self._favorites = tidalapi.Favorites(self._session, self._session.user.id)
-        return LibraryParser(self._favorites)
+        return LibraryParser(self._favorites, track_limit=track_limit)
 
     def test_parse_tracks(self):
         parser = self.setup()
@@ -21,7 +21,8 @@ class LibraryParserTest(unittest.TestCase):
         self.assertEqual(len(self._favorites.tracks()), len(parser.all_tracks))
 
     def test_parse_collection(self):
-        parser = self.setup()
+        track_limit = 100
+        parser = self.setup(track_limit)
         track_count = len(parser.all_tracks)
         print(track_count)
 

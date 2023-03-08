@@ -27,7 +27,17 @@ class PlaylistManagerTest(unittest.TestCase):
         self.assertEqual(descr, test_list.description)
         self.assertIn(test_list, manager.playlists)
 
-        manager.add_tracks_to_playlist()
+        never_gonna_give_you_up = tidalapi.Track(self._auth.session, "177186841")
+        bananaphone = tidalapi.Track(self._auth.session, "35503648")
+        tracks = [never_gonna_give_you_up, bananaphone]
+
+        manager.add_tracks_to_playlist(test_list, tracks)
+        remote_tracks_ids = [t.id for t in test_list.tracks()]
+        self.assertEqual(len(remote_tracks_ids), len(tracks))
+
+        # Comparing the full object fails equality check, so we're settling for IDs
+        self.assertIn(never_gonna_give_you_up.id, remote_tracks_ids)
+        self.assertIn(bananaphone.id, remote_tracks_ids)
 
         result = manager.delete_playlist(test_list)
         self.assertEqual(result.status_code, 204)

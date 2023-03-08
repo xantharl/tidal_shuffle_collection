@@ -1,5 +1,6 @@
 import json
 import logging
+import requests
 import tidalapi
 from components.library_parser import LibraryParser
 from connector.session_v2 import SessionV2
@@ -91,7 +92,12 @@ class PlaylistManager:
         self, playlist: tidalapi.UserPlaylist, tracks: list[tidalapi.Track]
     ):
         media_ids = [t.id for t in tracks]
-        playlist.add(media_ids)
+        try:
+            # We need to call reparse to refresh the etag for this handshake
+            playlist._reparse()
+            playlist.add(media_ids)
+        except requests.exceptions.HTTPError as e:
+            logging.error(e)
 
     def update_from_parser(
         self, playlist: tidalapi.UserPlaylist, parser: LibraryParser
