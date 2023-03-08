@@ -91,20 +91,31 @@ class PlaylistManager:
     def add_tracks_to_playlist(
         self, playlist: tidalapi.UserPlaylist, tracks: list[tidalapi.Track]
     ):
+        chunk_size = 50
+        list_size = 0
         media_ids = [t.id for t in tracks]
-        try:
-            # We need to call reparse to refresh the etag for this handshake
-            playlist._reparse()
-            playlist.add(media_ids)
-        except requests.exceptions.HTTPError as e:
-            logging.error(e)
+        to_add = media_ids[:chunk_size]
+        remaining_ids = media_ids[chunk_size + 1 :]
+        while len(to_add) > 0:
+            try:
+                # We need to call reparse to refresh the etag for this handshake
+                playlist._reparse()
+                playlist.add(to_add)
+                to_add = remaining_ids[:chunk_size]
+                remaining_ids = remaining_ids[chunk_size + 1 :]
+                list_size += chunk_size
+                logging.info(
+                    f"Added {chunk_size} tracks to the list (total size {list_size})."
+                )
+            except requests.exceptions.HTTPError as e:
+                logging.error(e)
 
     def update_from_parser(
         self, playlist: tidalapi.UserPlaylist, parser: LibraryParser
     ):
         current_tracks: list[tidalapi.Track] = playlist.tracks()
 
-        if len(current_tracks > 0):
+        if len(current_tracks) > 0:
             to_remove = [ct for ct in current_tracks if ct not in parser.all_tracks]
             if len(to_remove) > 0:
                 for track in to_remove:
@@ -115,7 +126,7 @@ class PlaylistManager:
         else:
             to_add = [p for p in parser.all_tracks if p not in current_tracks]
 
-        self.add_tracks_to_playlist(playlist, [to_add])
+        self.add_tracks_to_playlist(playlist, to_add)
 
     def create_full_collection():
         pass

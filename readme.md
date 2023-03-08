@@ -3,8 +3,7 @@
 - execute `source ~/.bashrc`
 
 # Usage
-`create_list.py (optional)"Name of List"`
-If a name is not specified, the default in `config.yml` will be used.
+`python create_list.py -h"` shows usage instruction. Both arguments are optional.
 
 # Algorithm
 This tool generates a playlist of your full collection, with some limits applied from `config.yml`.

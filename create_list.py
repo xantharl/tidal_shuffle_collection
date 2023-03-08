@@ -1,3 +1,4 @@
+import logging
 from components.library_parser import LibraryParser
 from components.playlist_manager import PlaylistManager
 from connector.auth import Auth
@@ -33,11 +34,11 @@ def setup():
 
 def main():
     lib_parser, manager = setup()
-    manager.create_full_collection()
     args: argparse.Namespace = handle_args()
     playlist = manager.create_list(args.title, args.description)
     manager.update_from_parser(playlist, lib_parser)
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    logging.basicConfig(level="INFO")
+    main()

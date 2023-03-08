@@ -59,8 +59,11 @@ class LibraryParser:
         return min(self._artist_max, self.track_capacity) - self.artist_count(artist_id)
 
     def _parse(self):
+        logging.info("Parsing Favorited Tracks...")
         self._parse_tracks()
+        logging.info("Parsing Favorited Albums...")
         self._parse_albums()
+        logging.info("Parsing Favorited Artists...")
         self._parse_artists()
 
     def _parse_tracks(self):
@@ -129,6 +132,7 @@ class LibraryParser:
 
             tracks = artist.get_top_tracks(limit)
             self._all_track_count += len(tracks)
+            logging.info(f"Fetched {len(tracks)} tracks for artist '{artist.name}'")
 
             if artist not in self._all_tracks:
                 self._all_tracks[artist] = []
