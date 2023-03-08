@@ -17,3 +17,5 @@ This tool generates a playlist of your full collection, with some limits applied
 
 # Future Plans
 Album caching or multithreading - Unless there's a better way I haven't found, you have to hit `album/id/tracks` for each album. This can take quite some time in large libraries.
+
+Make this run out of github so we don't need users to clone the repo.
